@@ -1,0 +1,87 @@
+/*
+
+
+Name: David Brothers
+
+1. The first Linux tool you should check out is the very simple tool free. First, type man free and read its entire manual page; it’s short, don’t worry! 
+
+Done
+
+2. Now, run free, perhaps using some of the arguments that might be useful (e.g., -m, to display memory totals in megabytes). How much memory is in your system? How much is free? Do these numbers match your intuition? 
+Hereis the output I got when setting it to gigabytes: 
+              total        used        free      shared  buff/cache   available
+Mem:              7           1           0           0           6           6
+Swap:             0           0           0
+
+There is a total of 7 gigabytes worth of memory and zero of it is free. I find this really strange with how this works since this is a code space and is not my actual machine which has 16 gb worth of memory
+
+
+3. Next, create a little program that uses a certain amount of memory, called memory-user.c. This program should take one commandline argument: the number of megabytes of memory it will use. When run, it should allocate an array, and constantly stream through the array, touching each entry. The program should do this indefinitely, or, perhaps, for a certain amount of time also specified at the command line. 
+
+Here is my repo: https://github.com/Brothers9152/csc425.coding.8.git
+
+
+4. Now, while running your memory-user program, also (in a different terminal window, but on the same machine) run the free tool. How do the memory usage totals change when your program is running? How about when you kill the memory-user program? Do the numbers match your expectations? Try this for different amounts of memory usage. What happens when you use really large amounts of memory? 
+
+@Brothers9152 ➜ /workspaces/csc425.coding.8 (main) $ free -m
+              total        used        free      shared  buff/cache   available
+Mem:           7938        1322         313          63        6302        6237
+Swap:             0           0           0
+@Brothers9152 ➜ /workspaces/csc425.coding.8 (main) $ free -m
+              total        used        free      shared  buff/cache   available
+Mem:           7938        1418         216          63        6302        6141
+Swap:             0           0           0
+              total        used        free      shared  buff/cache   available
+Mem:           7938        3295         165          63        4477        4264
+Swap:             0           0           0
+
+
+When running the program we can see that depending on the amount of memory allocated the used will go up greatly while decreasing the available and buff/cache variables
+
+
+5. Let’s try one more tool, known as pmap. Spend some time, and read the pmap manual page in detail. 
+
+Done
+
+6. To use pmap, you have to know the process ID of the process you’re interested in. Thus, first run ps auxw to see a list of all processes; then, pick an interesting one, such as a browser. You can also use your memory-user program in this case (indeed, you can even have that program call getpid() and print out its PID for your convenience). 
+
+Done
+
+7. Now run pmap on some of these processes, using various flags (like -X) to reveal many details about the process. What do you see? How many different entities make up a modern address space, as opposed to our simple conception of code/stack/heap? 
+
+@Brothers9152 ➜ /workspaces/csc425.coding.8 (main) $ pmap 11595 -x
+11595:   ./memory-user 100 100
+Address           Kbytes     RSS   Dirty Mode  Mapping
+0000572c41459000       4       4       0 r---- memory-user
+0000572c4145a000       4       4       0 r-x-- memory-user
+0000572c4145b000       4       4       0 r---- memory-user
+0000572c4145c000       4       4       4 r---- memory-user
+0000572c4145d000       4       4       4 rw--- memory-user
+0000572c42044000     132       4       4 rw---   [ anon ]
+000072089ce00000  102404  102404  102404 rw---   [ anon ]
+00007208a33ad000     136     136       0 r---- libc-2.31.so
+00007208a33cf000    1504    1028       0 r-x-- libc-2.31.so
+00007208a3547000     312     164       0 r---- libc-2.31.so
+00007208a3595000      16      16      16 r---- libc-2.31.so
+00007208a3599000       8       8       8 rw--- libc-2.31.so
+00007208a359b000      24      20      20 rw---   [ anon ]
+00007208a35ab000       4       4       0 r---- ld-2.31.so
+00007208a35ac000     140     140       0 r-x-- ld-2.31.so
+00007208a35cf000      32      32       0 r---- ld-2.31.so
+00007208a35d8000       4       4       4 r---- ld-2.31.so
+00007208a35d9000       4       4       4 rw--- ld-2.31.so
+00007208a35da000       4       4       4 rw---   [ anon ]
+00007ffce5a89000     136      20      20 rw---   [ stack ]
+00007ffce5b17000      16       0       0 r----   [ anon ]
+00007ffce5b1b000       8       4       0 r-x--   [ anon ]
+ffffffffff600000       4       0       0 --x--   [ anon ]
+---------------- ------- ------- ------- 
+total kB          104908  104012  102492
+
+There are many different entities that make up a modern address space and to be honest it is kind of overwhelming as you can see above
+
+
+8. Finally, let’s run pmap on your memory-user program, with different amounts of used memory. What do you see here? Does the output from pmap match your expectations? 
+
+When running pmap on the memory-user program, the heap size will match the allocated memory (e.g., 50 MB or 500 MB). Other sections like the stack, code, and shared libraries should remain unchanged, as only the heap grows with larger memory allocations.
+*/
